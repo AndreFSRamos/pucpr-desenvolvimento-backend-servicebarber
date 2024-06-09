@@ -35,13 +35,44 @@ class SecurityConfig(
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/auth/v1/sign-in", "/api/auth/v1/sign-up-with-refresh-token").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/user/v1/sign-up").hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, "/api/user/v1/find-all", "/api/user/v1/find-by-id/{id}").hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.PUT, "/api/user/v1/update-password").hasAnyRole(ADMIN)
-                    .requestMatchers(HttpMethod.PATCH, "/api/user/v1/update-status/{id}").hasAnyRole(ADMIN)
-                    .requestMatchers(HttpMethod.DELETE, "/api/user/v1/delete/{id}").hasAnyRole(ADMIN)
+                    .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**"
+                    ).permitAll()
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/auth/v1/sign-in",
+                        "/api/auth/v1/sign-up-with-refresh-token"
+                    ).permitAll()
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/user/v1/sign-up",
+                        "/api/enterprise/v1/**",
+                        "/api/appointment/v1/**"
+                    ).hasAnyRole(ADMIN, MANAGER)
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/user/v1/find-all",
+                        "/api/user/v1/find-by-id/{id}",
+                        "/api/enterprise/v1/**",
+                        "/api/enterprise/v1/find-by-id/{id}",
+                        "/api/appointment/v1/**",
+                        "/api/appointment/v1/find-by-id/{id}"
+                    ).hasAnyRole(ADMIN, MANAGER)
+                    .requestMatchers(
+                        HttpMethod.PUT,
+                        "/api/user/v1/update-password"
+                    ).hasAnyRole(ADMIN)
+                    .requestMatchers(
+                        HttpMethod.PATCH,
+                        "/api/user/v1/update-status/{id}"
+                    ).hasAnyRole(ADMIN)
+                    .requestMatchers(
+                        HttpMethod.DELETE,
+                        "/api/user/v1/delete/{id}",
+                        "/api/enterprise/v1/delete/{id}",
+                        "/api/appointment/v1/delete/{id}"
+                    ).hasAnyRole(ADMIN)
                     .requestMatchers("/users").denyAll()
                     .anyRequest().authenticated()
             }

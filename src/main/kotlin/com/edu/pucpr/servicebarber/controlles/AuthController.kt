@@ -19,7 +19,8 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/sign-up-with-refresh-token")
-    fun signUpWithRefreshToken(@NotBlank(message = "The refreshToken field cannot be empty") refreshToken: String ): ResponseEntity<Any> {
+    fun signUpWithRefreshToken(@RequestParam(value = "refreshToken") @NotBlank(message = "The refreshToken field cannot be empty") refreshToken: String ): ResponseEntity<Any> {
+        println(refreshToken)
         return ResponseEntity.ok().body(authService.signUpWithRefreshToken(refreshToken))
     }
 }

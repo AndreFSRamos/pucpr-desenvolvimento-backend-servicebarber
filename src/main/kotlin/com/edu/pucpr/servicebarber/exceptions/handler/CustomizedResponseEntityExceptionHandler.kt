@@ -51,7 +51,7 @@ class CustomizedResponseEntityExceptionHandler{
     }
 
 
-    @ExceptionHandler(BadCredentialsException::class)
+    @ExceptionHandler(InvalidJwtAuthenticationException::class)
     fun handleInvalidJwtAuthenticationExceptions(
         ex: InvalidJwtAuthenticationException,
         request: HttpServletRequest

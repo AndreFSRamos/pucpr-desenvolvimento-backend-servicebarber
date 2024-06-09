@@ -5,6 +5,8 @@ import com.edu.pucpr.servicebarber.dtos.EnterpriseDTO
 import com.edu.pucpr.servicebarber.dtos.RegisterEnterpriseDTO
 import com.edu.pucpr.servicebarber.exceptions.ResourceNotFoundException
 import com.edu.pucpr.servicebarber.repositories.EnterpriseRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,8 +18,9 @@ class EnterpriseService(
         this.enterpriseRepository.save(enterpriseConverter.registerEnterpriseDTOToEnterprise(dto))
     }
 
-    fun findAll() : List<EnterpriseDTO>{
-        return this.enterpriseRepository.findAll().map { user -> this.enterpriseConverter.enterpriseToEnterpriseDTO(user) }
+    fun findAll(pageable: Pageable): Page<EnterpriseDTO> {
+        val enterprisePage = this.enterpriseRepository.findAll(pageable)
+        return enterprisePage.map { user -> this.enterpriseConverter.enterpriseToEnterpriseDTO(user) }
     }
 
 
@@ -28,6 +31,6 @@ class EnterpriseService(
 
     fun deleteById(id : Long) {
         this.findById(id)
-        this.deleteById(id)
+        this.enterpriseRepository.deleteById(id)
     }
 }

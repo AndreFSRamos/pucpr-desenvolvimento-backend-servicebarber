@@ -2,8 +2,10 @@ package com.edu.pucpr.servicebarber.controlles
 
 import com.edu.pucpr.servicebarber.dtos.RegisterUserDTO
 import com.edu.pucpr.servicebarber.dtos.UpdatePasswordDTO
+import com.edu.pucpr.servicebarber.dtos.UserDTO
 import com.edu.pucpr.servicebarber.services.UserService
 import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -15,14 +17,25 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 
 @Controller
 @RequestMapping("api/user/v1")
-class UserController(private val userService: UserService) {
+class UserController(
+    private val userService: UserService
+) {
 
     @GetMapping("/find-all")
-    fun getAllUsers() : ResponseEntity<Any> {
-        return ResponseEntity.ok().body(this.userService.findAll())
+    fun getAllUsers(
+        @RequestParam(value = "page", defaultValue = "0") page: Int,
+        @RequestParam(value = "size", defaultValue = "10") size: Int,
+        @RequestParam(value = "sort", defaultValue = "id,asc") sort: String
+    ): ResponseEntity<Page<UserDTO>> {
+        val sortParams = sort.split(",")
+        val sortDirection = if (sortParams.size > 1 && sortParams[1].equals("desc", ignoreCase = true)) Sort.Direction.DESC else Sort.Direction.ASC
+        return ResponseEntity.ok(userService.findAll(PageRequest.of(page, size, Sort.by(sortDirection, sortParams[0]))))
     }
 
     @GetMapping("/find-by-id/{id}")
@@ -47,6 +60,6 @@ class UserController(private val userService: UserService) {
 
     @DeleteMapping("/delete/{id}")
     fun deleteUserById(@PathVariable(value = "id") id: Long) : ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.deleteUserById(id));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.deleteUserById(id))
     }
 }

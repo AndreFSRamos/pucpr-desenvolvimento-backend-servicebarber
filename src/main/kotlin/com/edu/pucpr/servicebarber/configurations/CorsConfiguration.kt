@@ -13,8 +13,16 @@ class CorsConfiguration : WebMvcConfigurer {
             .allowedMethods("POST")
             .allowedOrigins("*")
 
-        registry.addMapping("/api/user/v1/**",)
-            .allowedMethods("GET", "POST", "DELETE", "PUT", "PATH", "OPTION")
+        registry.addMapping("/api/user/v1/**")
+            .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS")
+            .allowedOrigins("*")
+
+        registry.addMapping("/api/enterprise/v1/**")
+            .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS")
+            .allowedOrigins("*")
+
+        registry.addMapping("/api/appointment/v1/**")
+            .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS")
             .allowedOrigins("*")
     }
 }

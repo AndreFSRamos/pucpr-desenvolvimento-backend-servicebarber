@@ -9,6 +9,8 @@ import com.edu.pucpr.servicebarber.repositories.AppointmentRepository
 import com.edu.pucpr.servicebarber.repositories.EnterpriseRepository
 import com.edu.pucpr.servicebarber.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,8 +21,9 @@ class AppointmentService @Autowired constructor(
     private val enterpriseRepository: EnterpriseRepository
 ) {
 
-    fun findAll() : List<AppointmentDTO> {
-        return this.appointmentRepository.findAll().map { appointment -> appointmentConverter.appointmentToAppointmentDTO(appointment) }
+    fun findAll(pageable: Pageable): Page<AppointmentDTO> {
+        val appointmentPage = this.appointmentRepository.findAll(pageable)
+        return appointmentPage.map { appointment -> appointmentConverter.appointmentToAppointmentDTO(appointment) }
     }
 
     fun findById(id : Long) : AppointmentDTO {

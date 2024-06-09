@@ -6,5 +6,4 @@ data class RegisterAppointmentDTO(
         val time: LocalDateTime,
         val idEnterprise: Long,
         val idUser: Long
-) {
-}
+)

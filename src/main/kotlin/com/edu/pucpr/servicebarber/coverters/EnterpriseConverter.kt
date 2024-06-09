@@ -1,9 +1,6 @@
 package com.edu.pucpr.servicebarber.coverters
 
-import com.edu.pucpr.servicebarber.dtos.EnterpriseByAppointmentDTO
-import com.edu.pucpr.servicebarber.dtos.EnterpriseByUserDTO
-import com.edu.pucpr.servicebarber.dtos.EnterpriseDTO
-import com.edu.pucpr.servicebarber.dtos.RegisterEnterpriseDTO
+import com.edu.pucpr.servicebarber.dtos.*
 import com.edu.pucpr.servicebarber.entities.Enterprise
 import com.edu.pucpr.servicebarber.exceptions.ResourceNotFoundException
 import com.edu.pucpr.servicebarber.repositories.UserRepository
@@ -13,9 +10,7 @@ import java.time.LocalDateTime
 
 @Component
 class EnterpriseConverter(
-    private val userRepository: UserRepository,
-    private val userConverter: UserConverter,
-    private val appointmentConverter: AppointmentConverter
+    private val userRepository: UserRepository
 ) {
 
     fun registerEnterpriseDTOToEnterprise(dto: RegisterEnterpriseDTO): Enterprise {
@@ -38,22 +33,24 @@ class EnterpriseConverter(
 
     fun enterpriseToEnterpriseDTO(enterprise: Enterprise) : EnterpriseDTO {
         return EnterpriseDTO(
+            enterprise.id!!,
             enterprise.name,
             enterprise.address,
-            userConverter.userToUserDTO(enterprise.user),
-            enterprise.appointments.map { appointmentConverter.appointmentToAppointmentByEnterpriseDTO(it) }.toMutableList()
+            UserDTOByEnterpriseDTO(
+                enterprise.user.id!!,
+                enterprise.user.usernameProperty,
+                enterprise.user.fullName,
+                enterprise.user.email,
+                enterprise.user.sysActive,
+                enterprise.user.authorities.map { it.authority }
+            ),
+            enterprise.appointments.map { AppointmentByEnterpriseDTO(it.id!!, it.appointmentTime, it.user.fullName) }.toMutableList()
         )
     }
 
     fun enterpriseToEnterpriseByUserDTO(enterprise: Enterprise) : EnterpriseByUserDTO {
         return EnterpriseByUserDTO(
-            enterprise.name,
-            enterprise.address
-        )
-    }
-
-    fun enterpriseToEnterpriseByAppointmentDTO(enterprise: Enterprise) : EnterpriseByAppointmentDTO {
-        return EnterpriseByAppointmentDTO(
+            enterprise.id!!,
             enterprise.name,
             enterprise.address
         )

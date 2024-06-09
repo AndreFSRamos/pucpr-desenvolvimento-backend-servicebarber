@@ -11,10 +11,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class UserConverter(
-    private val converterEnterprise: EnterpriseConverter,
-    private val converterAppointment: AppointmentConverter
-) {
+class UserConverter {
     fun registerUserDTOToUser(dto: RegisterUserDTO): User {
         val encoder = BCryptPasswordEncoder()
 
@@ -25,8 +22,8 @@ class UserConverter(
             dto.email,
             UserRoleEnum.COMMON,
             true,
-            true,
-            true,
+            accountNonLocked = true,
+            credentialsNonExpired = true,
         )
         user.sysUserInsert = SessionUtil.getIdSessionUser()
         user.sysDateInsert = LocalDateTime.now()
@@ -37,13 +34,14 @@ class UserConverter(
 
     fun userToUserDTO(user: User): UserDTO {
         return UserDTO(
+            user.id!!,
             user.usernameProperty,
             user.fullName,
             user.email,
             user.sysActive,
             user.authorities.map { it.authority },
-            user.enterprises.map { converterEnterprise.enterpriseToEnterpriseByUserDTO(it) }.toMutableList(),
-            user.appointments.map { converterAppointment.appointmentToAppointmentByUserDTO(it) }.toMutableList()
+            mutableListOf(),
+            mutableListOf()
         )
     }
 
